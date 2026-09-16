@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>TikTok connected — Why It's Like That</title>
+<link rel="stylesheet" href="stijl.css">
+</head>
+<body>
+<main>
+  <h1>TikTok connected</h1>
+  <p class="lead" id="uitleg">Reading the authorisation code…</p>
+  <div class="doos" id="doos" hidden>
+    <p>Copy this code and paste it into the terminal where <code>tiktok-koppelen</code> is waiting:</p>
+    <p class="code" id="code"></p>
+    <button id="kopieer">Copy code</button>
+  </div>
+  <p class="voet">This page shows the one-time code that TikTok returns after you approve the app. It is used once, on your own computer, to obtain the publishing token. Nothing is stored here.</p>
+</main>
+<script>
+(function () {
+  var p = new URLSearchParams(location.search);
+  var code = p.get('code'), fout = p.get('error'), beschrijving = p.get('error_description');
+  var uitleg = document.getElementById('uitleg');
+  if (fout) {
+    uitleg.textContent = 'TikTok returned an error: ' + fout + (beschrijving ? ' — ' + beschrijving : '');
+    return;
+  }
+  if (!code) {
+    uitleg.textContent = 'No authorisation code in the address. Start again from the terminal.';
+    return;
+  }
+  uitleg.textContent = 'Approved. One more step:';
+  document.getElementById('code').textContent = code;
+  document.getElementById('doos').hidden = false;
+  document.getElementById('kopieer').addEventListener('click', function () {
+    navigator.clipboard.writeText(code).then(function () {
+      document.getElementById('kopieer').textContent = 'Copied';
+    });
+  });
+  // The code must not linger in the browser history.
+  history.replaceState(null, '', location.pathname);
+})();
+</script>
+</body>
+</html>
